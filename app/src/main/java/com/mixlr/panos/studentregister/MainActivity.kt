@@ -2,8 +2,10 @@ package com.mixlr.panos.studentregister
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -63,7 +65,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         studentRecyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = StudentRecycleViewAdapter()
+        adapter = StudentRecycleViewAdapter {
+            selectedItem: Student -> listItemClicked(selectedItem)
+        }
         studentRecyclerView.adapter = adapter
 
         displayStudentsList()
@@ -74,5 +78,9 @@ class MainActivity : AppCompatActivity() {
             adapter.setList(it)
             adapter.notifyDataSetChanged()
         }
+    }
+
+    private fun listItemClicked(student: Student) {
+        Toast.makeText(this, "Student name is ${student.name}", Toast.LENGTH_LONG).show()
     }
 }
