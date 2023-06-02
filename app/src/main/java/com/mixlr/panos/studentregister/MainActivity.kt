@@ -22,6 +22,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var studentRecyclerView: RecyclerView
     private lateinit var adapter: StudentRecycleViewAdapter
 
+    private lateinit var selectedStudent: Student
+    private var listItemClicked: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,12 +40,21 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory).get(StudentViewModel::class.java)
 
         saveButton.setOnClickListener {
-            saveStudentData()
-            clearInput()
+            if (listItemClicked) {
+                updateStudentData()
+            } else {
+                saveStudentData()
+                clearInput()
+            }
         }
 
         clearButton.setOnClickListener {
-            clearInput()
+            if (listItemClicked) {
+                deleteStudentData()
+                clearInput()
+            } else {
+                clearInput()
+            }
         }
 
         initRecyclerView()
@@ -81,6 +93,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun listItemClicked(student: Student) {
-        Toast.makeText(this, "Student name is ${student.name}", Toast.LENGTH_LONG).show()
+        selectedStudent = student
+        saveButton.text = "Update"
+        clearButton.text = "Delete"
+        listItemClicked = true
+        nameEditText.setText(selectedStudent.name)
+        emailEditText.setText(selectedStudent.email)
+    }
+
+    private fun updateStudentData() {
+        viewModel.updateStudent(
+            Student(
+                selectedStudent.id,
+                nameEditText.text.toString(),
+                emailEditText.text.toString()
+            )
+        )
+
+        saveButton.text = "Save"
+        clearButton.text = "Clear"
+        listItemClicked = false
+    }
+
+    private fun deleteStudentData() {
+        viewModel.deleteStudent(
+            Student(
+                selectedStudent.id,
+                nameEditText.text.toString(),
+                emailEditText.text.toString()
+            )
+        )
+
+        saveButton.text = "Save"
+        clearButton.text = "Clear"
+        listItemClicked = false
     }
 }
