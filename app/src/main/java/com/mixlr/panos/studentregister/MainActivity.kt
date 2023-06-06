@@ -26,21 +26,23 @@ class MainActivity : AppCompatActivity() {
         val factory = StudentViewModelFactory(dao)
         viewModel = ViewModelProvider(this, factory).get(StudentViewModel::class.java)
 
-        binding.btnSave.setOnClickListener {
-            if (listItemClicked) {
-                updateStudentData()
-            } else {
-                saveStudentData()
-                clearInput()
+        binding.apply {
+            btnSave.setOnClickListener {
+                if (listItemClicked) {
+                    updateStudentData()
+                } else {
+                    saveStudentData()
+                    clearInput()
+                }
             }
-        }
 
-        binding.btnClear.setOnClickListener {
-            if (listItemClicked) {
-                deleteStudentData()
-                clearInput()
-            } else {
-                clearInput()
+            btnClear.setOnClickListener {
+                if (listItemClicked) {
+                    deleteStudentData()
+                    clearInput()
+                } else {
+                    clearInput()
+                }
             }
         }
 
@@ -48,26 +50,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveStudentData() {
-        viewModel.insertStudent(
-            Student(
-                0,
-                binding.etEmail.text.toString(),
-                binding.etEmail.text.toString()
+        binding.apply {
+            viewModel.insertStudent(
+                Student(
+                    0,
+                    etName.text.toString(),
+                    etEmail.text.toString()
+                )
             )
-        )
+        }
     }
 
     private fun clearInput() {
-        binding.etName.setText("")
-        binding.etEmail.setText("")
+        binding.apply {
+            etName.setText("")
+            etEmail.setText("")
+        }
     }
 
     private fun initRecyclerView() {
-        binding.rvStudent.layoutManager = LinearLayoutManager(this)
         adapter = StudentRecycleViewAdapter {
-            selectedItem: Student -> listItemClicked(selectedItem)
+                selectedItem: Student -> listItemClicked(selectedItem)
         }
-        binding.rvStudent.adapter = adapter
+        val mainActivity = this
+        binding.apply {
+            rvStudent.layoutManager = LinearLayoutManager(mainActivity)
+            rvStudent.adapter = adapter
+        }
 
         displayStudentsList()
     }
@@ -81,38 +90,46 @@ class MainActivity : AppCompatActivity() {
 
     private fun listItemClicked(student: Student) {
         selectedStudent = student
-        binding.btnSave.text = "Update"
-        binding.btnClear.text = "Delete"
         listItemClicked = true
-        binding.etName.setText(selectedStudent.name)
-        binding.etEmail.setText(selectedStudent.email)
+        binding.apply {
+            btnSave.text = "Update"
+            btnClear.text = "Delete"
+            etName.setText(selectedStudent.name)
+            etEmail.setText(selectedStudent.email)
+        }
     }
 
     private fun updateStudentData() {
-        viewModel.updateStudent(
-            Student(
-                selectedStudent.id,
-                binding.etName.text.toString(),
-                binding.etEmail.text.toString()
+        binding.apply {
+            viewModel.updateStudent(
+                Student(
+                    selectedStudent.id,
+                    etName.text.toString(),
+                    etEmail.text.toString()
+                )
             )
-        )
 
-        binding.btnSave.text = "Save"
-        binding.btnClear.text = "Clear"
+            btnSave.text = "Save"
+            btnClear.text = "Clear"
+        }
+
         listItemClicked = false
     }
 
     private fun deleteStudentData() {
-        viewModel.deleteStudent(
-            Student(
-                selectedStudent.id,
-                binding.etName.text.toString(),
-                binding.etEmail.text.toString()
+        binding.apply {
+            viewModel.deleteStudent(
+                Student(
+                    selectedStudent.id,
+                    etName.text.toString(),
+                    etEmail.text.toString()
+                )
             )
-        )
 
-        binding.btnSave.text = "Save"
-        binding.btnClear.text = "Clear"
+            btnSave.text = "Save"
+            btnClear.text = "Clear"
+        }
+
         listItemClicked = false
     }
 }
