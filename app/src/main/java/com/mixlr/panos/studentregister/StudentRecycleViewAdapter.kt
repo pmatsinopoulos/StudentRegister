@@ -5,17 +5,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.mixlr.panos.studentregister.databinding.ListItemBinding
 import com.mixlr.panos.studentregister.db.Student
 
 class StudentRecycleViewAdapter(
     private val clickListener: (Student) -> Unit
 ) : RecyclerView.Adapter<StudentViewHolder>() {
     private val studentList = ArrayList<Student>()
+    private lateinit var binding: ListItemBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val listItem = layoutInflater.inflate(R.layout.list_item, parent, false)
-        return StudentViewHolder(listItem)
+        binding = ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
+        return StudentViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -32,15 +34,15 @@ class StudentRecycleViewAdapter(
     }
 }
 
-class StudentViewHolder(private val view: View): RecyclerView.ViewHolder(view) {
+class StudentViewHolder(private val binding: ListItemBinding): RecyclerView.ViewHolder(binding.root) {
     fun bind(student: Student, clickListener: (Student) -> Unit) {
-        val nameTextView = view.findViewById<TextView>(R.id.tvName)
-        val emailTextView = view.findViewById<TextView>(R.id.tvEmail)
-        nameTextView.text = student.name
-        emailTextView.text = student.email
+        binding.apply {
+            tvName.text = student.name
+            tvEmail.text = student.email
 
-        view.setOnClickListener {
-            clickListener(student)
+            root.setOnClickListener {
+                clickListener(student)
+            }
         }
     }
 }
